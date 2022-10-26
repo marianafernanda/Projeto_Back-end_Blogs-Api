@@ -1,5 +1,7 @@
 const express = require('express');
-const Login = require('./controllers/Login');
+const Login = require('./controllers/Login.controller');
+const User = require('./controllers/User.controller');
+const validateUser = require('./auth/validateUser');
 // const validateJWT = require('./auth/validateJWT');
 // ...
 
@@ -10,6 +12,7 @@ app.use(express.json());
 // ...
 
 app.post('/login', Login);
+app.post('/user', validateUser, User.createUser);
 
 // É importante exportar a constante `app`,
 // para que possa ser utilizada pelo arquivo `src/server.js`

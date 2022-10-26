@@ -4,7 +4,7 @@ const UserService = require('../services/User.service');
 
 const secret = process.env.JWT_SECRET;
 
-module.exports = async (req, res, next) => {
+const validateJWT = async (req, res, next) => {
   const token = req.header('Authorization');
 
   if (!token) return res.status(401).json({ error: 'Token not found' });
@@ -22,3 +22,5 @@ module.exports = async (req, res, next) => {
     return res.status(401).json({ message: err.message });
   }
 };
+
+module.exports = validateJWT;
