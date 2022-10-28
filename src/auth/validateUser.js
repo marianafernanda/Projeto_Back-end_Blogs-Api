@@ -1,37 +1,53 @@
 const { getByEmail } = require('../services/User.service');
 
+const validateName = (name) => {
+  if (!name || name.length < 8) {
+    return { status: 400, message: '"displayName" length must be at least 8 characters long' };
+  }
+};
+
+const validatePassword = (password) => {
+  if (!password || password.length < 6) {
+    return { status: 400, message: '"password" length must be at least 6 characters long' };
+  }
+};
+
 // Função para validar email. Fonte: https://www.horadecodar.com.br/2020/09/13/como-validar-email-com-javascript/
-const validateEmail = (email) => {
+const valideEmail = (email) => {
   const re = /\S+@\S+/;
   return re.test(email);
 };
 
-const registeredEmail = async (email) => {
+const validateEmail = async (email) => {
+  if (valideEmail(email) === false) {
+    return { status: 400, message: '"email" must be a valid email' };
+  }
+
   const userEmail = await getByEmail(email);
-  return userEmail;
+  if (userEmail) {
+    return { status: 409, message: 'User already registered' };
+  }
 };
 
 const validateUser = async (req, res, next) => {
   const { displayName, email, password } = req.body;
+  let error = null;
 
-  if (displayName.length < 8) {
-    return res.status(400)
-    .json({ message: '"displayName" length must be at least 8 characters long' });
-  }
-  if (validateEmail(email) === false) {
-    return res.status(400).json({ message: '"email" must be a valid email' });
-  }
-  if (password.length < 6) {
-    return res.status(400)
-    .json({ message: '"password" length must be at least 6 characters long' });
+  error = validateName(displayName);
+
+  if (!error) {
+    error = validatePassword(password);
+
+    if (!error) {
+      error = await validateEmail(email);
+    }
   }
 
-  const check = await registeredEmail(email);
-  
-  if (check) {
-    return res.status(409).json({ message: 'User already registered' });
-  } 
-    next();
+  if (error) {
+    return res.status(error.status).json({ message: error.message });
+  }
+
+  next();
 };
 
 module.exports = validateUser;
