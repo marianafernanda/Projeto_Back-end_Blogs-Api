@@ -17,6 +17,7 @@ app.get('/user', validateJWT, User.getAll);
 app.get('/user/:id', validateJWT, User.getByUserId);
 app.get('/categories', validateJWT, Category.getAll);
 app.get('/post', validateJWT, BlogPost.getAll);
+app.get('/post/:id', validateJWT, BlogPost.getById);
 app.post('/login', Login);
 app.post('/user', validateUser, User.createUser);
 app.post('/categories', validateJWT, Category.createCategory);
