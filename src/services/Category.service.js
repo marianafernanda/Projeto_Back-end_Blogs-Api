@@ -2,8 +2,6 @@ const { Category } = require('../models');
 
 const getAll = async () => {
   const categories = await Category.findAll();
-  console.log(categories);
-  console.log('qualquer');
   return categories;
 };
 
